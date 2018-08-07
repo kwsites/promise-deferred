@@ -10,7 +10,7 @@
       "email": "steve@mydev.co"
     }
   ],
-  "main": "./index",
+  "main": "./dist/index",
   "license": "MIT",
   "repository": "git://github.com/kwsites/promise-deferred.git",
   "devDependencies": {
@@ -19,7 +19,7 @@
   },
   "files": [
     "LICENSE",
-    "lib/**/*.*"
+    "dist/**/*.*"
   ],
   "scripts": {
     "build": "babel src -d dist",
