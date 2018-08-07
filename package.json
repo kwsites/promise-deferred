@@ -24,6 +24,6 @@
   "scripts": {
     "build": "babel src -d dist",
     "version": "npm run build",
-    "postversion": "git push && git push --tags && rm -r dist"
+    "postversion": "npm run publish && git push && git push --tags && rm -r dist"
   }
 }
