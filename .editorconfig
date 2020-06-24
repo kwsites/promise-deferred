@@ -7,7 +7,7 @@ indent_style = space
 indent_size = 3
 trim_trailing_whitespace = true
 
-[*.{js,less}]
+[*.{ts,less}]
 charset = utf-8
 
 [*.json]
