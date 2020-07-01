@@ -1,9 +1,13 @@
-import deferred from '../src';
+import deferred, { DeferredPromise } from '../src';
 
 describe('deferred', () => {
 
+   let handler: any, catcher: any, def: DeferredPromise<any>, result: Promise<any>;
+
+   beforeEach(() => givenDeferred())
+
    it('creates a PromiseLike', async () => {
-      const {promise, fulfilled, status} = deferred();
+      const {promise, fulfilled, status} = def;
       expect(promise).toEqual(expect.objectContaining({
          catch: expect.any(Function),
          then: expect.any(Function),
@@ -14,40 +18,62 @@ describe('deferred', () => {
    });
 
    it('can be resolved', async () => {
-      const def = deferred();
       def.done('abc');
 
       expect(def.status).toBe('resolved');
       expect(def.fulfilled).toBe(true);
-      expect(await def.promise).toBe('abc');
+
+      await assertHandled('abc');
    });
 
    it('can be rejected', async () => {
       const error = new Error('abc');
-      const def = deferred();
       def.fail(error);
 
       expect(def.status).toBe('rejected');
       expect(def.fulfilled).toBe(true);
-      expect(await (def.promise.catch(e => e))).toBe(error);
+
+      await assertCaught(error);
    });
 
    it('once resolved, cannot be re-fulfilled', async () => {
-      const def = deferred();
       def.done('a');
       def.fail(new Error(''));
 
       expect(def.fulfilled).toBe(true);
       expect(def.status).toBe('resolved');
+
+      await assertHandled('a');
    });
 
    it('once rejected, cannot be re-fulfilled', async () => {
-      const def = deferred();
       def.fail(new Error(''));
       def.done('a');
 
       expect(def.fulfilled).toBe(true);
       expect(def.status).toBe('rejected');
+
+      await assertCaught();
    });
 
+   async function assertHandled(result: any) {
+      await result;
+      expect(handler).toHaveBeenCalledWith(result);
+      expect(catcher).not.toHaveBeenCalled();
+   }
+
+   async function assertCaught(err?: Error) {
+      await result;
+      expect(handler).not.toHaveBeenCalled();
+      expect(catcher).toHaveBeenCalledWith(err || expect.any(Error));
+   }
+
+   function givenDeferred() {
+      result = (def = deferred<any>()).promise
+         .then(handler = jest.fn())
+         .catch(catcher = jest.fn())
+      ;
+
+      return def;
+   }
 })
