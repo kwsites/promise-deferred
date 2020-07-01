@@ -3,7 +3,7 @@
  * that will be resolved when the `done` method is called or rejected when the
  * `fail` method is called.
  */
-export interface DeferredPromise<RESOLVES extends any = void, REJECTS extends Error = Error> {
+export interface DeferredPromise<RESOLVES, REJECTS extends Error = Error> {
    done (result: RESOLVES): void;
    fail (error: REJECTS): void;
    readonly status: DeferredPromiseStatus;
@@ -31,7 +31,7 @@ export type DeferredPromiseStatus = 'pending' | 'resolved' | 'rejected';
  import {deferred} from '@kwsites/promise-deferred`;
  ```
  */
-export function deferred<T = any, E extends Error = Error> (): DeferredPromise<T, E> {
+export function deferred<T extends any = void, E extends Error = Error> (): DeferredPromise<T, E> {
    let done: (result: T) => void;
    let fail: (error: E) => void;
    let status: DeferredPromiseStatus = 'pending';
